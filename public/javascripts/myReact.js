@@ -1,8 +1,19 @@
 /**
  * Created by ASUA on 2015/9/13.
  */
+var myData = "666666";
+var QueryData = React.createClass({
+    render: function () {
+        return (
+            <tbody>
+                <tr><td>{this.props.data}</td></tr>
+            </tbody>
+        );
+    }
+});
 var QueryResult = React.createClass({
     render: function () {
+
         return (
             <table>
                 <tr>
@@ -10,9 +21,7 @@ var QueryResult = React.createClass({
                        dddd
                     </th>
                 </tr>
-                <tbody>
-                    ddd
-                </tbody>
+                <QueryData data={myData}/>
             </table>
         );
     }
