@@ -1,54 +1,46 @@
 /**
  * Created by ASUA on 2015/9/13.
  */
-var myData = [
-    {
-        "pub_id":1022,
-        "title":"On Counting and Approximation.",
-        "pub_year":"1989",
-        "journal":"Acta Inf.",
-        "url":"db/journals/acta/acta26.html#KoblerST89",
-        "pages":"363-379",
-        "volume":"26",
-        "pub_number":"4",
-        "ee":"http://dx.doi.org/10.1007/BF00276023",
-        "note":null
-    },
-    {
-        "pub_id":1022,
-        "title":"On Counting and Approximation.",
-        "pub_year":"1989",
-        "journal":"Acta Inf.",
-        "url":"db/journals/acta/acta26.html#KoblerST89",
-        "pages":"363-379",
-        "volume":"26",
-        "pub_number":"4",
-        "ee":"http://dx.doi.org/10.1007/BF00276023",
-        "note":null
-    }
-];
-
-var QueryData = React.createClass({
-    render: function () {
-        return (
-                <span>{this.props.data}</span>
-        );
-    }
-});
 
 var QueryDataList = React.createClass({
     render: function () {
         var QueryNodes = this.props.data.map(function(query) {
+            var key;
+            var cols = [];
+            for (key in query) {
+                cols.push(
+                    <td>
+                        {query[key]}
+                    </td>
+                );
+            }
             return (
-                <tr><td>
-                    <QueryData data={query} />
-                </td></tr>
+                <tr>
+                    {cols}
+                </tr>
             );
         });
         return (
             <tbody>
                 {QueryNodes}
             </tbody>
+        );
+    }
+});
+
+var QueryHeader = React.createClass({
+    render: function () {
+        var QueryNodes = this.props.header.map(function(field) {
+            return (
+                <th>
+                    <span>{field}</span>
+                </th>
+            );
+        });
+        return (
+            <tr>
+                {QueryNodes}
+            </tr>
         );
     }
 });
@@ -66,7 +58,14 @@ var QueryForm = React.createClass({
             dataType: 'json',
             data: {query: query},
             success: function(data) {
-                this.props.onQueryResult(data);
+                if (data.length == 0)
+                    return;
+                var key,
+                    header = [];
+                for (key in data[0]) {
+                    header.push(key);
+                }
+                this.props.onQueryResult(data, header);
                 this.refs.query.getDOMNode().value = '';
             }.bind(this)
         });
@@ -83,11 +82,15 @@ var QueryForm = React.createClass({
 
 var QueryResult = React.createClass({
     getInitialState: function() {
-        return {data: []};
+        return {
+            data: [],
+            header: []
+        };
     },
-    onQueryResult: function(data) {
+    onQueryResult: function(data, header) {
         this.setState({
-            data: data
+            data: data,
+            header: header
         });
     },
     componentDidMount: function() {
@@ -97,13 +100,9 @@ var QueryResult = React.createClass({
         return (
             <div>
                 <QueryForm onQueryResult={this.onQueryResult} />
-                <table>
-                    <tr>
-                        <th>
-                             dddd
-                        </th>
-                    </tr>
-                    <QueryDataList data={this.state.data}/>
+                <table class="table">
+                    <QueryHeader header={this.state.header} />
+                    <QueryDataList data={this.state.data} />
                 </table>
             </div>
         );
