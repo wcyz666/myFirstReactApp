@@ -7,10 +7,11 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/query', function(req, res, next) {
+router.all('/query', function(req, res, next) {
     var query = req.body.query.toLowerCase();
+    console.log(query);
     if (query.indexOf("drop") != -1 || query.indexOf("insert") != -1 || query.indexOf("delete") != -1)
-        res.end("We only support SELECT")
+        res.end("We only support SELECT");
     else {
         connection.query(query, function(err, rows, fields) {
             if (err) throw err;
@@ -28,10 +29,7 @@ router.post('/query', function(req, res, next) {
             console.log(req.cookies);
             res.render("scores", {me : username, scores: scores});
             */
-            res.json({
-                field : fields,
-                rows: rows
-            });
+            res.json(rows);
         });
     }
 
